@@ -4,7 +4,7 @@ import { StockList } from '../../components';
 class TVChart {
 	constructor(chartdom, data = []) {
 		this.chartdom = chartdom;
-		this.paneCount = 3;
+		this.paneCount = 2;
 		this.stretchFactor = 4;
 		this.chart = window.LightweightCharts.createChart(this.chartdom, {
 			width: 0,
@@ -432,8 +432,12 @@ const convertKlineData = (data) => {
 const getKLineData = async (code,ts='1d') => {
 	const res = await fetch(`/api/kline?code=${code}&ts=${ts}`);
 	const data = await res.json();
+	if (data.data[0][0].includes('-')) {
+			data.data.map((item) => {
+			item[0] = Math.floor(new Date(item[0]).getTime() / 1000);
+		});
+	}
 	const klineData = convertKlineData(data.data);
-	// console.log(klineData);
 	return klineData;
 };
 function MaCalculater(candleData, maLength = 5) {

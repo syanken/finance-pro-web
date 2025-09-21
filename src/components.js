@@ -105,7 +105,7 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 					<div style={{ fontSize: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{item.股票代码}</div>
 				</div>
 				<div style={{ display: 'flex' }} onClick={() => onRowClick(item)}>
-					<div style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'black') : 'green', minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{Number.isFinite(item.市盈率) ? (item.最新价 ? item.最新价 : '停牌') : '退市'}</div>
+					<div style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'black') : 'green', minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{Number.isFinite(Number(item.市盈率)) ? (item.最新价 ? item.最新价 : '停牌') : '退市'}</div>
 					<div style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'black') : 'green', minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{item.涨跌幅 ? item.涨跌幅 : '-'}</div>
 					<div style={{ minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '14px' }}>{item.总手 ? item.总手 + '万' : '-'}</div>
 					<div style={{ minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '14px' }}>{item.换手率 + '%'}</div>
