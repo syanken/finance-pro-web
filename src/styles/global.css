@@ -1,0 +1,40 @@
+.row-container {
+	display: flex;
+}
+
+.scrollable-col {
+	flex: 1;
+	overflow-x: auto;
+	white-space: nowrap;
+	display: flex;
+}
+
+.scrollable-col .inner {
+	min-width: 60px;
+	width: 60px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.scrollable-col::-webkit-scrollbar {
+	display: none;
+}
+.name-code-container {
+	width: 20%;
+	min-width: 80px;
+}
+.list {
+	overflow-y: scroll;
+	flex: 1;
+}
+
+.list::-webkit-scrollbar {
+	display: none;
+}
+.list *::-webkit-scrollbar {
+	display: none;
+}
+.row-item:hover {
+	background-color: #3e3e3e;
+	cursor: pointer;
+}

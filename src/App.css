@@ -1,38 +1,92 @@
-.App {
-  text-align: center;
+.header {
+	display: flex;
+	justify-content: space-evenly;
+	height: 5vh;
+	background-color: #333;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.header-btn {
+	background-color: #333;
+	border: none;
+	height: 100%;
+	cursor: pointer;
+	color: white;
+	padding: 0 10px;
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+}
+.market-item:hover,
+.header-btn:hover {
+	background-color: #4c4c4c;
+}
+.header hr {
+	height: auto auto auto 1vh;
+	width: 1px;
+	border: none;
+	background-color: #ccc;
+	margin: 0;
+}
+.space {
+	width: auto;
+	flex-grow: 1;
+}
+.header-btn.active {
+	background-color: #1c1c1c;
+	font-weight: bold;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.page {
+	background-color: #ffff00;
+	height: 95vh;
+	margin-top: 5vh;
+	display: flex;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Quote */
+.kline {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	width: 75%;
 }
 
-.App-link {
-  color: #61dafb;
+.setting-button {
+	display: flex;
+	color: white;
+	justify-content: center;
+	align-items: center;
+	width: 5vh;
+}
+.setting-button:hover {
+	background-color: #555;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#tvChartContainer {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+  min-height: 0;
+}
+
+
+#chart {
+	flex: 1 1 0; /* 允许等比例伸缩 */
+	min-height: 0;
+}
+
+#watchlist-box {
+	display: flex;
+	flex-direction: column;
+	width: 25%;
+	height: 95vh;
+}
+.watchlist-header {
+	display: flex;
 }
