@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { DoubleList } from '../../components';
+import { DoubleList1, StockList, DoubleList3, DoubleList4, TestList } from '../../components';
 
 class TVChart {
 	constructor(chartdom, data = []) {
@@ -429,13 +429,115 @@ function MaCalculater(candleData, maLength = 5) {
 	return maData;
 }
 
+function GroupSelect({ visible, watchlists, setWatchlistVisible }) {
+	const { ref, position, handleDown } = useDraggable('.window-header');
+	const [selectedSet, setSelectedSet] = useState(() => new Set());
+	const [editingId, setEditingId] = useState(null); // 正在编辑的分组 id
+	const [editValue, setEditValue] = useState(''); // 当前输入框内容
+	useEffect(() => {
+		if (!visible) return;
+		const handleClickOutside = (e) => {
+			if (ref.current && !ref.current.contains(e.target)) {
+				setWatchlistVisible(!visible);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, [visible]);
+	const userId = 1;
+	const saveName = async (id, newName) => {
+		if (!newName.trim()) return;
+		const res = await fetch(`/api/watchlist?userId=${userId}`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				id: id,
+				name: newName.trim(),
+			}),
+		});
+		const updated = await res.json();
+		// 用后端返回的最新数据替换本地
+		// setWatchlists((prev) => prev.map((g) => (g.id === id ? updated : g)));
+		setEditingId(null);
+	};
+	return (
+		<div className='drag-window' ref={ref} onMouseDown={handleDown} style={{ left: position.x, top: position.y, display: visible ? 'flex' : 'none' }}>
+			<div className='window-header'>
+				分组
+				<span className='close' onClick={() => setWatchlistVisible(!visible)}>
+					&times;
+				</span>
+			</div>
+			<div className='window-content'>
+				<div className='window-table-wrapper'>
+					<table className='window-table'>
+						<thead>
+							<tr>
+								<th>分组</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{watchlists.map((watchlist) => (
+								<tr key={watchlist.id}>
+									<td>
+										{editingId === watchlist.id ? (
+											<input
+												className='fp-btn'
+												type='text'
+												value={editValue}
+												onChange={(e) => setEditValue(e.target.value)}
+												onBlur={() => saveName(watchlist.id, editValue)}
+												onKeyDown={(e) => {
+													if (e.key === 'Enter') saveName(watchlist.id, editValue);
+													if (e.key === 'Escape') setEditingId(null);
+												}}
+												autoFocus
+											/>
+										) : (
+											<span
+												style={{ cursor: 'pointer' }}
+												onClick={() => {
+													setEditingId(watchlist.id);
+													setEditValue(watchlist.name);
+												}}
+											>
+												{watchlist.name}
+											</span>
+										)}
+									</td>
+									<td>
+										<div className='fp-btn' onClick={() => setSelectedSet((prev) => new Set(prev).add(watchlist.id))}>
+											{selectedSet.has(watchlist.id) ? '○' : '⬤'}
+										</div>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div className='row-container'>
+				<div className='fp-btn' onClick={() => {}}>
+					新建
+				</div>
+				<div className='fp-btn' onClick={() => setWatchlistVisible(!visible)}>
+					确定
+				</div>
+			</div>
+		</div>
+	);
+}
+
 function Quote() {
 	const { data: allList, loading } = useFetchAllList();
 	const [list, setList] = useState([]);
 	const [watchlists, setWatchlists] = useState([]);
 	const [settingVisible, setSettingVisible] = useState(false);
 	const [filterVisible, setFilterVisible] = useState(false);
-	const [addVisible, setAddVisible] = useState(false);
+	const [selectMode, setSelectMode] = useState(false);
+	const [watchlistVisible, setWatchlistVisible] = useState(false);
 
 	const chartContainerRef = useRef(null);
 	const tvChartRef = useRef(null);
@@ -456,7 +558,10 @@ function Quote() {
 	useEffect(() => {
 		fetch(`/api/watchlist?userId=${userId}`)
 			.then((res) => res.json())
-			.then((data) => setWatchlists(data))
+			.then((data) => {
+				setWatchlists(data);
+				console.log(data);
+			})
 			.catch(console.error);
 	}, []);
 	const handleRowClick = async (code) => {
@@ -489,7 +594,11 @@ function Quote() {
 		setFilterVisible(!filterVisible);
 	};
 	const toggleWatchlist = () => {
-		setAddVisible(!addVisible);
+		setSelectMode(!selectMode);
+	};
+	const toggleSelect = (data) => {
+		console.log(data);
+		setWatchlistVisible(true);
 	};
 
 	return (
@@ -510,15 +619,16 @@ function Quote() {
 			<div id='watchlist-box'>
 				<div className='watchlist-title'>
 					<div className='watchlist-list'>
-						<div className='watchlist-list-item' onClick={() => setList(allList)}>全部列表</div>
+						<div className='watchlist-list-item' onClick={() => setList(allList)}>
+							全部列表
+						</div>
 						{watchlists.map((item) => {
-								return (
-									<div  className='watchlist-list-item' key={item.id} onClick={() => setList(item.data)}>
-
-										{item.name}
-									</div>
-								);
-							})}
+							return (
+								<div className='watchlist-list-item' key={item.id} onClick={() => setList(item.data)}>
+									{item.name}
+								</div>
+							);
+						})}
 					</div>
 					<div className='row-container'>
 						<div className='fp-btn' onClick={toggleFilter}>
@@ -529,13 +639,11 @@ function Quote() {
 						</div>
 					</div>
 				</div>
-				<div className='list'>
-					<DoubleList allList={list} loading={loading} onRowClick={handleRowClick} addVisible={addVisible} />
-
-				</div>
+				<StockList stockList={list} loading={loading} onRowClick={handleRowClick} selectMode={selectMode} onAdd={toggleSelect} />
 			</div>
 			<ChartSetting visible={settingVisible} toggleSetting={toggleSetting}></ChartSetting>
 			<Filter visible={filterVisible} toggleFilter={toggleFilter} allList={allList} setList={setList}></Filter>
+			<GroupSelect visible={watchlistVisible} watchlists={watchlists} setWatchlistVisible={setWatchlistVisible}></GroupSelect>
 		</>
 	);
 }
