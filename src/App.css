@@ -62,7 +62,10 @@
 	color: white;
 	justify-content: center;
 	align-items: center;
-	width: 5vh;
+	width: 4vw;
+	max-width: 4vw;
+	background-color: #333;
+
 }
 .setting-button:hover {
 	background-color: #555;

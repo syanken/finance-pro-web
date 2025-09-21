@@ -1,6 +1,6 @@
-import { createContext, forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeGrid as Grid, FixedSizeList as List } from 'react-window';
+import { FixedSizeList as List } from 'react-window';
 import './App.css';
 import './styles/global.css';
 
@@ -100,11 +100,11 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 					top: style.top + 24,
 				}}
 			>
-				<div style={{ width: '20%', minWidth: '80px', position: 'sticky', left: 0 }} onClick={() => onRowClick(item.股票代码)}>
+				<div style={{ width: '20%', minWidth: '80px', position: 'sticky', left: 0 }} onClick={() => onRowClick(item)}>
 					<div style={{ fontSize: '14px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{item.股票名称}</div>
 					<div style={{ fontSize: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{item.股票代码}</div>
 				</div>
-				<div style={{ display: 'flex' }} onClick={() => onRowClick(item.股票代码)}>
+				<div style={{ display: 'flex' }} onClick={() => onRowClick(item)}>
 					<div style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'black') : 'green', minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{Number.isFinite(item.市盈率) ? (item.最新价 ? item.最新价 : '停牌') : '退市'}</div>
 					<div style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'black') : 'green', minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{item.涨跌幅 ? item.涨跌幅 : '-'}</div>
 					<div style={{ minWidth: '60px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '14px' }}>{item.总手 ? item.总手 + '万' : '-'}</div>
@@ -143,7 +143,7 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 					{({ height, width }) => {
 						if (loading) return <div>加载中…</div>;
 						return (
-							<List height={height} itemCount={stockList.length} itemSize={32} width={width} innerElementType={InnerElementType}>
+							<List height={height} itemCount={stockList.length} itemSize={32} width={width} innerElementType={InnerElementType} >	
 								{Row}
 							</List>
 						);

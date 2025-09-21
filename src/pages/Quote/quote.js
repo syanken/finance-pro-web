@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { DoubleList1, StockList, DoubleList3, DoubleList4, TestList, DoubleList } from '../../components';
+import { StockList } from '../../components';
 
 class TVChart {
 	constructor(chartdom, data = []) {
@@ -19,7 +19,13 @@ class TVChart {
 				entireTextOnly: true,
 				// ensureEdgeTickMarksVisible: true,
 			},
-			timeScale: { visible: true },
+			timeScale: {
+				visible: true,
+				// tickMarkFormatter: (time) => {
+				// 	const date = new Date(time * 1000);
+				// 	return date.toISOString().replace('T', ' ').substring(0, 19);
+				// },
+			},
 			grid: { vertLines: { visible: true } },
 			layout: {
 				textColor: 'black',
@@ -31,7 +37,9 @@ class TVChart {
 				},
 				attributionLogo: false,
 			},
-			localization: { dateFormat: 'yyyy-MM-dd' },
+			localization: {
+				timeFormatter: formatTime,
+			},
 		});
 		window.addEventListener('resize', () => this.syncResize());
 		this.style = { color: '#2196F3', lineWidth: 1 };
@@ -46,7 +54,11 @@ class TVChart {
 			if (!param.point) {
 				return;
 			}
-			console.log(param.time);
+
+			// let  date = new Date(param.time * 1000);
+			// date = date.toISOString().replace('T', ' ').substring(0, 19);
+
+			// console.log(date);
 		}
 
 		this.chart.subscribeClick(myClickHandler);
@@ -91,7 +103,7 @@ class TVChart {
 				<div>H: ${(dataPoint.high ?? 0).toFixed(2)}</div>
 				<div>L: ${(dataPoint.low ?? 0).toFixed(2)}</div>
 				<div>C: ${(dataPoint.close ?? 0).toFixed(2)}</div>
-				<div style="margin-top:4px">${dataPoint.time}</div>
+				<div style="margin-top:4px">${formatTime(dataPoint.time)}</div>
 				</div>
 			`;
 
@@ -169,7 +181,19 @@ class TVChart {
 		}
 	}
 }
+function formatTime(timestamp) {
+	const date = new Date(timestamp * 1000);
+	const h = date.getUTCHours();
+	const m = date.getUTCMinutes();
+	const s = date.getUTCSeconds();
+	const ms = date.getUTCMilliseconds();
 
+	if (h === 0 && m === 0 && s === 0 && ms === 0) {
+		return date.getUTCFullYear() + '-' + String(date.getUTCMonth() + 1).padStart(2, '0') + '-' + String(date.getUTCDate()).padStart(2, '0');
+	} else {
+		return date.getUTCFullYear() + '-' + String(date.getUTCMonth() + 1).padStart(2, '0') + '-' + String(date.getUTCDate()).padStart(2, '0') + ' ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+	}
+}
 function useDraggable(dragSelector = null, initialPos = { x: 200, y: 200 }) {
 	const [position, setPosition] = useState(initialPos);
 	const [isDragging, setIsDragging] = useState(false);
@@ -384,7 +408,7 @@ const convertKlineData = (data) => {
 			};
 			prevClose = Number(item[2]);
 			return {
-				time: String(item[0]),
+				time: Number(item[0]),
 				open: Number(item[1]),
 				high: Number(item[3]),
 				low: Number(item[4]),
@@ -397,7 +421,7 @@ const convertKlineData = (data) => {
 			const color = prevClose === null || item[2] >= prevClose ? '#ef5350' : '#26a69a';
 			prevClose = Number(item[2]);
 			return {
-				time: String(item[0]),
+				time: Number(item[0]),
 				value: Number(item[5]),
 				color,
 			};
@@ -405,8 +429,8 @@ const convertKlineData = (data) => {
 	];
 };
 
-const getKLineData = async (code) => {
-	const res = await fetch(`/api/kline?code=${code}`);
+const getKLineData = async (code,ts='1d') => {
+	const res = await fetch(`/api/kline?code=${code}&ts=${ts}`);
 	const data = await res.json();
 	const klineData = convertKlineData(data.data);
 	// console.log(klineData);
@@ -538,6 +562,7 @@ function Quote() {
 	const [filterVisible, setFilterVisible] = useState(false);
 	const [selectMode, setSelectMode] = useState(false);
 	const [watchlistVisible, setWatchlistVisible] = useState(false);
+	const [currentStockInfo, setCurrentStockInfo] = useState({});
 
 	const chartContainerRef = useRef(null);
 	const tvChartRef = useRef(null);
@@ -560,12 +585,15 @@ function Quote() {
 			.then((res) => res.json())
 			.then((data) => {
 				setWatchlists(data);
-				console.log(data);
+				// console.log(data);
 			})
 			.catch(console.error);
 	}, []);
-	const handleRowClick = async (code) => {
-		const klineData = await getKLineData(code);
+	const handleRowClick = async (item) => {
+		let ts='1d';
+		const klineData = await getKLineData(item.股票代码,ts);
+
+		setCurrentStockInfo(item);
 		const tvData = [
 			[
 				{
@@ -600,12 +628,50 @@ function Quote() {
 		console.log(data);
 		setWatchlistVisible(true);
 	};
-
+	const showLabel = (k, v) => (
+		<div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}>
+			<span style={{ color: '#666', paddingLeft: 10 }}>{k}:</span>
+			<span style={{ color: '#000', fontWeight: 500, paddingRight: 10 }}>{v}</span>
+		</div>
+	);
 	return (
 		<>
 			<div className='kline'>
-				<div className='watchlist-item-info-container'>
-					<div className='watchlist-item-info'></div>
+				<div className='row-container'>
+					<div
+						style={{
+							flex: 1,
+							display: 'flex',
+							flexDirection: 'row',
+							overflow: 'auto',
+							scrollbarWidth: 'none',
+						}}
+					>
+						<div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: 10, paddingRight: 10 }}>
+							<div style={{ flex: 1 }}>{currentStockInfo.股票名称}</div>
+							<div style={{ flex: 1 }}>{currentStockInfo.股票代码}</div>
+						</div>
+						<div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: 10, paddingRight: 10 }}>
+							<div style={{ flex: 1, color: currentStockInfo.涨跌幅 >= 0 ? (currentStockInfo.涨跌幅 > 0 ? 'red' : 'black') : 'green' }}>{currentStockInfo.最新价}</div>
+							<div style={{ flex: 1, color: currentStockInfo.涨跌幅 >= 0 ? (currentStockInfo.涨跌幅 > 0 ? 'red' : 'black') : 'green' }}>{currentStockInfo.涨跌幅}%</div>
+						</div>
+						<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+							{showLabel('开盘价', currentStockInfo.开盘价 ?? '-')}
+							{showLabel('最高价', currentStockInfo.最高价 ?? '-')}
+						</div>
+						<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+							{showLabel('最低价', currentStockInfo.最低价 ?? '-')}
+							{showLabel('换手率', currentStockInfo.换手率 ?? '-')}
+						</div>
+						<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+							{showLabel('总手', currentStockInfo.总手 ?? '-')}
+							{showLabel('成交额', currentStockInfo.成交额 ?? '-')}
+						</div>
+						<div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+							{showLabel('总市值', currentStockInfo.总市值 ?? '-')}
+							{showLabel('市净率', currentStockInfo.市净率 ?? '-')}
+						</div>
+					</div>
 					<div className='setting-button' onClick={toggleSetting}>
 						<svg stroke='currentColor' fill='currentColor' strokeWidth='0' viewBox='0 0 1024 1024' fontSize='18px' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg'>
 							<path d='M924.8 625.7l-65.5-56c3.1-19 4.7-38.4 4.7-57.8s-1.6-38.8-4.7-57.8l65.5-56a32.03 32.03 0 0 0 9.3-35.2l-.9-2.6a443.74 443.74 0 0 0-79.7-137.9l-1.8-2.1a32.12 32.12 0 0 0-35.1-9.5l-81.3 28.9c-30-24.6-63.5-44-99.7-57.6l-15.7-85a32.05 32.05 0 0 0-25.8-25.7l-2.7-.5c-52.1-9.4-106.9-9.4-159 0l-2.7.5a32.05 32.05 0 0 0-25.8 25.7l-15.8 85.4a351.86 351.86 0 0 0-99 57.4l-81.9-29.1a32 32 0 0 0-35.1 9.5l-1.8 2.1a446.02 446.02 0 0 0-79.7 137.9l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.3 56.6c-3.1 18.8-4.6 38-4.6 57.1 0 19.2 1.5 38.4 4.6 57.1L99 625.5a32.03 32.03 0 0 0-9.3 35.2l.9 2.6c18.1 50.4 44.9 96.9 79.7 137.9l1.8 2.1a32.12 32.12 0 0 0 35.1 9.5l81.9-29.1c29.8 24.5 63.1 43.9 99 57.4l15.8 85.4a32.05 32.05 0 0 0 25.8 25.7l2.7.5a449.4 449.4 0 0 0 159 0l2.7-.5a32.05 32.05 0 0 0 25.8-25.7l15.7-85a350 350 0 0 0 99.7-57.6l81.3 28.9a32 32 0 0 0 35.1-9.5l1.8-2.1c34.8-41.1 61.6-87.5 79.7-137.9l.9-2.6c4.5-12.3.8-26.3-9.3-35zM788.3 465.9c2.5 15.1 3.8 30.6 3.8 46.1s-1.3 31-3.8 46.1l-6.6 40.1 74.7 63.9a370.03 370.03 0 0 1-42.6 73.6L721 702.8l-31.4 25.8c-23.9 19.6-50.5 35-79.3 45.8l-38.1 14.3-17.9 97a377.5 377.5 0 0 1-85 0l-17.9-97.2-37.8-14.5c-28.5-10.8-55-26.2-78.7-45.7l-31.4-25.9-93.4 33.2c-17-22.9-31.2-47.6-42.6-73.6l75.5-64.5-6.5-40c-2.4-14.9-3.7-30.3-3.7-45.5 0-15.3 1.2-30.6 3.7-45.5l6.5-40-75.5-64.5c11.3-26.1 25.6-50.7 42.6-73.6l93.4 33.2 31.4-25.9c23.7-19.5 50.2-34.9 78.7-45.7l37.9-14.3 17.9-97.2c28.1-3.2 56.8-3.2 85 0l17.9 97 38.1 14.3c28.7 10.8 55.4 26.2 79.3 45.8l31.4 25.8 92.8-32.9c17 22.9 31.2 47.6 42.6 73.6L781.8 426l6.5 39.9zM512 326c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm79.2 255.2A111.6 111.6 0 0 1 512 614c-29.9 0-58-11.7-79.2-32.8A111.6 111.6 0 0 1 400 502c0-29.9 11.7-58 32.8-79.2C454 401.6 482.1 390 512 390c29.9 0 58 11.6 79.2 32.8A111.6 111.6 0 0 1 624 502c0 29.9-11.7 58-32.8 79.2z'></path>
@@ -640,7 +706,6 @@ function Quote() {
 					</div>
 				</div>
 				<StockList stockList={list} loading={loading} onRowClick={handleRowClick} selectMode={selectMode} onAdd={toggleSelect} />
-
 			</div>
 			<ChartSetting visible={settingVisible} toggleSetting={toggleSetting}></ChartSetting>
 			<Filter visible={filterVisible} toggleFilter={toggleFilter} allList={allList} setList={setList}></Filter>
