@@ -93,7 +93,12 @@
 	display: flex;
 	flex: 1;
 	cursor: pointer;
+	overflow: auto;
 }
+.watchlist-list::-webkit-scrollbar {
+	display: none;
+}
+
 .watchlist-list-item {
 	flex: 1;
 	text-align: center;

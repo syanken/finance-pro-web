@@ -336,10 +336,12 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 			setSelectedSet(() => new Set());
 		}
 	}, [selectMode]);
-	const Header = ({ selectMode, toggleSelectAll }) => {
+	const Header = ({ selectMode, toggleSelectAll, style }) => {
 		return (
 			<div
 				style={{
+					...style,
+
 					display: 'flex',
 					fontWeight: 'bold',
 					position: 'sticky',
@@ -359,9 +361,8 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 						style={{
 							flex: 'none',
 							width: 24,
-							minWidth: '24px',
+							minWidth: 24,
 							height: '100%',
-							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
 							cursor: 'pointer',
@@ -371,6 +372,7 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 							position: 'sticky',
 							right: 0,
 							backgroundColor: 'white',
+							display: 'flex',
 						}}
 						onClick={toggleSelectAll}
 					>
@@ -384,8 +386,9 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 	};
 	const InnerElementType = forwardRef(({ children, style, ...rest }, ref) => (
 		<div ref={ref} {...rest}>
-			<Header selectMode={selectMode} toggleSelectAll={toggleSelectAll} selectedSet={selectedSet} stockList={stockList} />
-			<div style={{ ...style, position: 'relative' }}>{children}</div>
+			<Header selectMode={selectMode} toggleSelectAll={toggleSelectAll} selectedSet={selectedSet} stockList={stockList} style={style} />
+
+			<div style={{ ...style }}>{children}</div>
 		</div>
 	));
 	const Row = ({ index, style }) => {
@@ -396,6 +399,7 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 				style={{
 					...style,
 					display: 'flex',
+					top: style.top + 24,
 				}}
 			>
 				<div style={{ width: '20%', minWidth: '80px', position: 'sticky', left: 0 }} onClick={() => onRowClick(item.股票代码)}>
@@ -414,9 +418,8 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 						style={{
 							flex: 'none',
 							width: 24,
-							minWidth: '24px',
+							minWidth: 24,
 							height: '100%',
-							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
 							cursor: 'pointer',
@@ -437,7 +440,7 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 	};
 	return (
 		<>
-			<div className='list' style={{ width: '100%', height: '100%', flex: '1' }}>
+			<div className='list' style={{ width: '100%', height: 90, flex: '1' }}>
 				<AutoSizer>
 					{({ height, width }) => {
 						if (loading) return <div>加载中…</div>;
@@ -455,8 +458,6 @@ export function StockList({ stockList, loading, onRowClick = () => {}, selectMod
 					className='row-container'
 					style={{
 						flex: 'none',
-						height: 24,
-						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
 					}}

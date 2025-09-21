@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { DoubleList1, StockList, DoubleList3, DoubleList4, TestList } from '../../components';
+import { DoubleList1, StockList, DoubleList3, DoubleList4, TestList, DoubleList } from '../../components';
 
 class TVChart {
 	constructor(chartdom, data = []) {
@@ -640,6 +640,7 @@ function Quote() {
 					</div>
 				</div>
 				<StockList stockList={list} loading={loading} onRowClick={handleRowClick} selectMode={selectMode} onAdd={toggleSelect} />
+
 			</div>
 			<ChartSetting visible={settingVisible} toggleSetting={toggleSetting}></ChartSetting>
 			<Filter visible={filterVisible} toggleFilter={toggleFilter} allList={allList} setList={setList}></Filter>
