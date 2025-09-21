@@ -1,8 +1,9 @@
 import { BrowserRouter, Link, NavLink, Route, Routes } from 'react-router-dom';
+import './styles/global.css';
 import './App.css';
 import Quote from './pages/Quote/quote';
 import Strategy from './pages/Strategy/strategy';
-import './styles/global.css';
+
 function Home() {
 	return <h1>Home1</h1>;
 }

@@ -1,202 +1,133 @@
-.fp-btn {
-  background-color: #3e3e3e;
-  color: #ffffff;
-  cursor: pointer;
-  padding: 2px;
-}
-
-.fp-btn:hover {
-  background-color: #212121;
-}
-
-.fp-btn-selected {
-  background-color: #0c0c0c;
-  color: #ffffff;
-  padding: 2px;
-}
-
-/* 行容器 */
-.row-container {
-  display: flex;
-}
-
-.row-container > * {
-  /* flex: 1; */
-  width: 100%;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.row-item:hover{
-  background-color: #3e3e3e;
-  cursor: pointer;
-}
-
 .search-container {
-  display: flex;
-  margin: 10px 0;
+	display: flex;
+	margin: 10px 0;
 }
 
 .search-container input {
-  flex: 1;
-  padding: 6px;
-  font-size: 16px;
-  box-sizing: border-box;
-  width: 100%;
+	flex: 1;
+	padding: 6px;
+	font-size: 16px;
+	box-sizing: border-box;
+	width: 100%;
 }
 
 .search-container button {
-  padding: 6px 12px;
-  font-size: 14px;
+	padding: 6px 12px;
+	font-size: 14px;
 }
 
 #strategy-selector-container {
-  width: 25%;
-  background-color: #f5f5f5;
-  display: flex;
-  flex-direction: column;
-  /* height: 100%; */
-  min-width: 350px;
+	width: 25%;
+	background-color: #f5f5f5;
+	display: flex;
+	flex-direction: column;
+	/* height: 100%; */
+	min-width: 350px;
 }
 
 #strategy-info-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 }
 
 #strategy-result-container {
-  width: 25%;
-  display: flex;
-  flex-direction: column;
-}
-
-.list {
-  overflow-y: scroll;
-  flex: 1;
-}
-
-.list::-webkit-scrollbar {
-  display: none;
+	width: 25%;
+	display: flex;
+	flex-direction: column;
 }
 
 .strategy-list-item:hover {
-  background-color: #cccccc;
+	background-color: #cccccc;
 }
 
 .strategy-list-item-upper-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .strategy-list-item-name {
-  font-size: 14px;
-  flex-grow: 1;
+	font-size: 14px;
+	flex-grow: 1;
 }
 
 .strategy-list-item-content {
-  font-size: 10px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #333;
+	font-size: 10px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: #333;
 }
 
 .strategy-list-item-profit,
 .strategy-list-item-operator-btn {
-  display: flex;
-  gap: 10px;
-  margin: 0 5px 0 5px;
+	display: flex;
+	gap: 10px;
+	margin: 0 5px 0 5px;
 }
 
 /*  */
 @media screen and (max-width: 500px) {
-  #strategy-selector-container {
-    width: 100%;
-  }
+	#strategy-selector-container {
+		width: 100%;
+	}
 
-  #strategy-info-container,
-  #strategy-result-container {
-    display: none;
-  }
+	#strategy-info-container,
+	#strategy-result-container {
+		display: none;
+	}
 }
 
 .selected_btn {
-  background-color: #333;
-  color: white;
+	background-color: #333;
+	color: white;
 }
 
-/*  */
-/* .border-container {
-        border: 1px solid #333;
-    } */
-
 #strategy-result-history {
-  height: 20%;
-  /* border: 1px solid #333; */
+	height: 20%;
+	/* border: 1px solid #333; */
 }
 
 #strategy-result-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 80%;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	height: 80%;
 }
 
-.name-code-container {
-  width: 20%;
-  min-width: 80px;
-}
-
-.scrollable-col {
-  flex: 1;
-  overflow-x: auto;
-  white-space: nowrap;
-  /* background: #fff; */
-  display: flex;
-}
-
-/* 内部内容（防止换行） */
-.scrollable-col .inner {
-  min-width: 60px;
-  width: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.scrollable-col::-webkit-scrollbar {
-  display: none;
-}
+/* .name-code-container {
+	width: 20%;
+	min-width: 80px;
+} */
 
 #code-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
 }
 
 #code_editor {
-  flex: 1;
+	flex: 1;
 }
 
-.close-open-btn{
-    width: 24px;
-    height: 24px;
-    background-color: #333;
-    color: white;
-    cursor: pointer;
-    text-align: center;
-    line-height: 24px;
+.close-open-btn {
+	width: 24px;
+	height: 24px;
+	background-color: #333;
+	color: white;
+	cursor: pointer;
+	text-align: center;
+	line-height: 24px;
 }
 
-.btn-container{
-  display: flex;
-  flex-direction: column;
-  width: 60px;
+.btn-container {
+	display: flex;
+	flex-direction: column;
+	width: 60px;
 }
 
-.btn-container div{
-  margin: 2px;
+.btn-container div {
+	margin: 2px;
 }

@@ -1,7 +1,11 @@
 .row-container {
 	display: flex;
 }
-
+.row-container > * {
+	flex: 1;
+	text-align: center;
+	white-space: nowrap;
+}
 .scrollable-col {
 	flex: 1;
 	overflow-x: auto;
@@ -20,6 +24,7 @@
 	display: none;
 }
 .name-code-container {
+	flex: none;
 	width: 20%;
 	min-width: 80px;
 }
@@ -34,7 +39,23 @@
 .list *::-webkit-scrollbar {
 	display: none;
 }
-.row-item:hover {
+.row-item-hover:hover {
 	background-color: #3e3e3e;
 	cursor: pointer;
+}
+.fp-btn {
+	background-color: #3e3e3e;
+	color: #ffffff;
+	cursor: pointer;
+	padding: 2px;
+}
+
+.fp-btn:hover {
+	background-color: #212121;
+}
+
+.fp-btn-selected {
+	background-color: #0c0c0c;
+	color: #ffffff;
+	padding: 2px;
 }

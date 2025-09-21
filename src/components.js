@@ -3,47 +3,79 @@ import { FixedSizeList as List } from 'react-window';
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import './styles/global.css';
-export function DoubleList({ allList, loading, onRowClick = () => {} }) {
+export function DoubleList({ allList, loading, onRowClick = () => {}, addVisible }) {
 	const [leftWidth, setLeftWidth] = useState(0);
 	const Row = ({ index, style }) => {
 		const item = allList[index];
 		return (
-			<div style={style} className='row-container row-item' value={item.code} onClick={() => onRowClick(item.code)}>
+			<div style={style} className='row-container row-item-hover' value={item.股票代码} onClick={() => onRowClick(item.股票代码)}>
 				<div className='name-code-container'>
 					<div style={{ fontSize: '14px' }}>{item.股票名称}</div>
-					<div style={{ fontSize: '10px' }}>{item.code}</div>
+					<div style={{ fontSize: '10px' }}>{item.股票代码}</div>
 				</div>
 				<div className='scrollable-col'>
-					<div className='inner' style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'white') : 'green' }}>
-						{Number.isFinite(item.最新价) ? item.最新价 : '停牌'}
+					<div className='inner' style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'black') : 'green' }}>
+						{Number.isFinite(item.市盈率) ? (item.最新价 ? item.最新价 : '停牌') : '退市'}
 					</div>
-					<div className='inner' style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'white') : 'green' }}>
-						{item.涨跌幅}
+					<div className='inner' style={{ color: item.涨跌幅 >= 0 ? (item.涨跌幅 > 0 ? 'red' : 'black') : 'green' }}>
+						{item.涨跌幅 ? item.涨跌幅 : '-'}
 					</div>
-					<div className='inner'>{item.总手 + '万'}</div>
+					<div className='inner'>{item.总手 ? item.总手 + '万' : '-'}</div>
 					<div className='inner'>{item.换手率 + '%'}</div>
-					<div className='inner'>{item.总市值 + '亿'}</div>
+					<div className='inner'>{item.总市值 ? item.总市值 + '亿' : '-'}</div>
 				</div>
+				{addVisible ? (
+					<div
+						style={{
+							flex: 'none',
+							width: 24,
+							height: '100%',
+							display: 'flex', // 新增
+							alignItems: 'center', // 新增
+							justifyContent: 'center',
+							cursor: 'pointer',
+						}}
+						onClick={() => {
+							console.log(item.股票代码);
+						}}
+					>
+						<svg stroke='currentColor' viewBox='0 0 512 512'>
+							<path strokeWidth='32' d='M256 112v288m144-144H112'></path>
+						</svg>
+					</div>
+				) : null}
 			</div>
 		);
 	};
 	return (
 		<>
-			<div className='row-container'>
+			<div className='row-container' style={{ height: '24px' }}>
 				<div className='name-code-container'>名称/代码</div>
 				<div className='scrollable-col'>
 					<div className='inner'>价格 </div>
 					<div className='inner'>涨跌幅 </div>
 					<div className='inner'>成交量 </div>
 					<div className='inner'>换手率 </div>
-					<div className='inner'>成交额 </div>
+					<div className='inner'>总市值 </div>
 				</div>
+				{addVisible ? (
+					<div
+						style={{
+							flex: 'none',
+							width: 24,
+							fontSize: 18,
+							cursor: 'pointer',
+						}}
+					>
+						++
+					</div>
+				) : null}
 			</div>
 			<AutoSizer>
 				{({ height, width }) => {
 					if (loading) return <div>加载中…</div>;
 					return (
-						<List height={height} itemCount={allList.length} itemSize={32} width={width}>
+						<List height={height - 24} itemCount={allList.length} itemSize={32} width={width}>
 							{Row}
 						</List>
 					);
@@ -76,7 +108,7 @@ export function DoubleList2({ allList, loading }) {
 
 		const item = allList[index];
 		return (
-			<div style={style} className='row-container row-item'>
+			<div style={style} className='row-container row-item-hover'>
 				<div className='name-code-container'>
 					<div style={{ fontSize: '14px' }}>{item.股票名称}</div>
 					<div style={{ fontSize: '10px' }}>{item.code}</div>
@@ -107,7 +139,7 @@ export function DoubleList2({ allList, loading }) {
 	};
 	return (
 		<>
-			<div className='row-container'>
+			<div className='row-container' style={{ height: '32px' }}>
 				<div className='name-code-container'>名称/代码</div>
 				<div className='scrollable-col'>
 					<div className='inner'>价格 </div>
@@ -121,7 +153,7 @@ export function DoubleList2({ allList, loading }) {
 				{({ height, width }) => {
 					if (loading) return <div>加载中…</div>;
 					return (
-						<List height={height} itemCount={allList.length} itemSize={32} width={width} itemData={itemData}>
+						<List height={height - 32} itemCount={allList.length} itemSize={32} width={width} itemData={itemData}>
 							{Row}
 						</List>
 					);
