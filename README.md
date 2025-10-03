@@ -1,6 +1,6 @@
 # Finance Pro Web
 
-轻量级股票行情与量化策略前端，基于 React 18 + React-Router v6 + lightweight-charts 实现。
+轻量级股票行情与量化策略前端，基于 React 19 + React-Router v6 + lightweight-charts 实现。
 
 ## 一键启动
 
