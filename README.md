@@ -18,11 +18,12 @@ npm run build # 生成 build 目录用于生产部署
 回测 - 策略回测结果与收益曲线
 
 ## 技术栈
-React 18 + Hooks  
+React 19 + Hooks  
 React Router v6  
 lightweight-charts（K 线）  
 react-window + AutoSizer（高性能列表）  
 Jest + React Testing Library  
 
-## 后端接口
-默认代理到 http://localhost:3001，可在 package.json 的 proxy 字段或 .env 中修改。
+## 后端
+项目地址 https://github.com/syanken/finance-pro-node
+默认代理到 http://localhost:3001，可在 package.json 的 proxy 字段修改。
