@@ -41,7 +41,7 @@ class TVChart {
 				timeFormatter: formatTime,
 			},
 		});
-		window.addEventListener('resize', () => this.syncResize());
+		// window.addEventListener('resize', () => this.syncResize());
 		this.style = { color: '#2196F3', lineWidth: 1 };
 		this.data = data;
 		for (let i = 0; i < this.paneCount; i++) {
@@ -64,9 +64,9 @@ class TVChart {
 		this.chart.subscribeClick(myClickHandler);
 
 		//tooltip
-		const toolTipWidth = 80;
-		const toolTipHeight = 80;
-		const toolTipMargin = 15;
+		// const toolTipWidth = 80;
+		// const toolTipHeight = 80;
+		// const toolTipMargin = 15;
 
 		// Create and style the tooltip html element
 		const toolTip = document.createElement('div');
@@ -133,7 +133,8 @@ class TVChart {
 			});
 			if (i < data.length) {
 				data[i].forEach((series, j) => {
-					this.chart.addSeries(this.type[data[i][j].type], this.styles[data[i][j].type], i).setData(data[i][j].data);
+					const style = data[i][j].style || this.styles[data[i][j].type];
+					this.chart.addSeries(this.type[data[i][j].type], style, i).setData(data[i][j].data);
 				});
 			}
 		});
@@ -429,11 +430,11 @@ const convertKlineData = (data) => {
 	];
 };
 
-const getKLineData = async (code,ts='1d') => {
+const getKLineData = async (code, ts = '1d') => {
 	const res = await fetch(`/api/kline?code=${code}&ts=${ts}`);
 	const data = await res.json();
 	if (data.data[0][0].includes('-')) {
-			data.data.map((item) => {
+		data.data.map((item) => {
 			item[0] = Math.floor(new Date(item[0]).getTime() / 1000);
 		});
 	}
@@ -594,20 +595,26 @@ function Quote() {
 			.catch(console.error);
 	}, []);
 	const handleRowClick = async (item) => {
-		let ts='1d';
-		const klineData = await getKLineData(item.股票代码,ts);
+		let ts = '1d';
+		const klineData = await getKLineData(item.股票代码, ts);
 
 		setCurrentStockInfo(item);
+		const maData = [5, 10, 20, 40].map((len) => {
+			const hue = (len * 137.5) % 360;
+			const color = `hsl(${hue}, 70%, 45%)`;
+			return {
+				type: 'Line',
+				data: MaCalculater(klineData[0], len),
+				style: { color, lineWidth: 1 },
+			};
+		});
 		const tvData = [
 			[
 				{
 					type: 'Candlestick',
 					data: klineData[0],
 				},
-				{
-					type: 'Line',
-					data: MaCalculater(klineData[0], 5),
-				},
+				...maData,
 			],
 			[
 				{
