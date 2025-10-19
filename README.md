@@ -25,5 +25,5 @@ react-window + AutoSizer（高性能列表）
 Jest + React Testing Library  
 
 ## 后端
-项目地址 https://github.com/syanken/finance-pro-node
+项目地址 https://github.com/syanken/finance-pro-node  
 默认代理到 http://localhost:3001，可在 package.json 的 proxy 字段修改。
